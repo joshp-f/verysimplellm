@@ -132,9 +132,9 @@
 
 <body>
   <h1>Very Simple LLM</h1>
-  <p class="subtitle">A minimal API to make LLMs do what you actually want</p>
+  <p class="subtitle">A minimal API to make LLMs do what you actually need</p>
 
-  <p>Very Simple LLM makes using mainstream llms as easy as possible. Heres how you can get json output:
+  <p>Our api makes mainstream llms very simple to use. To get json output:
   </p>
 
   <div class="endpoint">
@@ -181,10 +181,11 @@
 method: 'POST',
 headers: {
   'Content-Type': 'application/json',
-  'Authorization': 'your-api-key'
+  'Authorization': 'your-model-providers-key'
 },
 body: JSON.stringify({
   model: 'gpt-4o-mini',
+  system_prompt: 'You are a helpful assistant that analyzes product reviews.',
   prompt: 'Please analyze the following user review: "This coffee maker is absolutely amazing! It brews perfect coffee every morning and the design looks great in my kitchen. The only minor issue is that it takes a bit longer to brew than expected, but the quality makes up for it. Highly recommend!"',
   json_schema: {
     type: 'object',
@@ -218,10 +219,11 @@ console.log(data);</code></pre>
 response = requests.post('http://localhost:8000/json',
 headers={
   'Content-Type': 'application/json',
-  'Authorization': 'your-api-key'
+  'Authorization': 'your-model-providers-key'
 },
 json={
   'model': 'gpt-4o-mini',
+  'system_prompt': 'You are a helpful assistant that analyzes product reviews.',
   'prompt': 'Please analyze the following user review: "This coffee maker is absolutely amazing! It brews perfect coffee every morning and the design looks great in my kitchen. The only minor issue is that it takes a bit longer to brew than expected, but the quality makes up for it. Highly recommend!"',
   'json_schema': {
     'type': 'object',
@@ -247,8 +249,7 @@ json={
 
 print(response.json())</code></pre>
   </div>
-
-  <h2>Example Response</h2>
+  <h2>Returns</h2>
   <div class="response-section">
     <pre><code>{
   "json": {
@@ -258,29 +259,12 @@ print(response.json())</code></pre>
   }
 }</code></pre>
   </div>
+  <h2>Model Codes</h2>
+  <p>Supports any model LiteLLM supports, such as OpenAI, Anthropic, Google and more. Grab model identifiers from <a
+      href="https://docs.litellm.ai/docs/providers" target="_blank">https://docs.litellm.ai/docs/providers</a></p>
 
-  <h2>JSON Schema</h2>
-  <p>The API accepts any valid JSON schema. Here's the schema used in the example above:</p>
-
-  <pre><code>{
-  "type": "object",
-  "properties": {
-    "title": {
-      "type": "string",
-      "description": "A brief title summarizing the review"
-    },
-    "sentiment": {
-      "type": "number",
-      "description": "Sentiment score from -1 (negative) to 1 (positive)"
-    },
-    "category": {
-      "type": "string",
-      "enum": ["electronics", "home", "food", "clothing", "books", "other"],
-      "description": "Product category"
-    }
-  },
-  "required": ["title", "sentiment", "category"]
-}</code></pre>
+  <h2>Authorization header</h2>
+  <p>Put your LLM providers Api Key into the Authorization header. We dont store this anywhere ever.</p>
 </body>
 
 </html>
