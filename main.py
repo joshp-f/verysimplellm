@@ -40,7 +40,7 @@ async def generate_json(
             "role": "user", 
             "content": request.prompt
         })
-        
+        print(request) 
         response = litellm.completion(
             model=request.model,
             messages=messages,

@@ -127,6 +127,90 @@
     .tab-content.active {
       display: block;
     }
+
+    .test-section {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    }
+
+    #test-button {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    #test-button:hover {
+      background: #2980b9;
+    }
+
+    #test-button:disabled {
+      background: #bdc3c7;
+      cursor: not-allowed;
+    }
+
+    .test-response {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 4px;
+      display: none;
+    }
+
+    .test-response.success {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+      display: block;
+    }
+
+    .test-response.error {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+      display: block;
+    }
+
+    .test-response pre {
+      background: transparent;
+      border: none;
+      padding: 0;
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
   </style>
 </head>
 
@@ -152,7 +236,7 @@
 -H "Content-Type: application/json" \
 -H "Authorization: your-model-provider-key" \
 -d '{
-  "model": "gpt-4o-mini",
+  "model": "anthropic/claude-sonnet-4-20250514",
   "prompt": "Please analyze the following user review: \"This coffee maker is absolutely amazing! It brews perfect coffee every morning and the design looks great in my kitchen. The only minor issue is that it takes a bit longer to brew than expected, but the quality makes up for it. Highly recommend!\"",
   "json_schema": {
     "type": "object",
@@ -171,7 +255,8 @@
         "description": "Product category"
       }
     },
-    "required": ["title", "sentiment", "category"]
+    "required": ["title", "sentiment", "category"],
+    "additionalProperties":false
   }
 }'</code></pre>
   </div>
@@ -184,8 +269,8 @@ headers: {
   'Authorization': 'your-model-providers-key'
 },
 body: JSON.stringify({
-  model: 'gpt-4o-mini',
-  system_prompt: 'You are a helpful assistant that analyzes product reviews.',
+  model: 'anthropic/claude-sonnet-4-20250514',
+  system_prompt: 'Only output required fields.',
   prompt: 'Please analyze the following user review: "This coffee maker is absolutely amazing! It brews perfect coffee every morning and the design looks great in my kitchen. The only minor issue is that it takes a bit longer to brew than expected, but the quality makes up for it. Highly recommend!"',
   json_schema: {
     type: 'object',
@@ -204,7 +289,8 @@ body: JSON.stringify({
         description: 'Product category'
       }
     },
-    required: ['title', 'sentiment', 'category']
+    required: ['title', 'sentiment', 'category'],
+    additionalProperties:false
   }
 })
 });
@@ -222,8 +308,8 @@ headers={
   'Authorization': 'your-model-providers-key'
 },
 json={
-  'model': 'gpt-4o-mini',
-  'system_prompt': 'You are a helpful assistant that analyzes product reviews.',
+  'model': 'anthropic/claude-sonnet-4-20250514',
+  'system_prompt': 'Only output required fields.',
   'prompt': 'Please analyze the following user review: "This coffee maker is absolutely amazing! It brews perfect coffee every morning and the design looks great in my kitchen. The only minor issue is that it takes a bit longer to brew than expected, but the quality makes up for it. Highly recommend!"',
   'json_schema': {
     'type': 'object',
@@ -242,7 +328,8 @@ json={
         'description': 'Product category'
       }
     },
-    'required': ['title', 'sentiment', 'category']
+    'required': ['title', 'sentiment', 'category'],
+    'additionalProperties':False
   }
 }
 )
@@ -259,6 +346,21 @@ print(response.json())</code></pre>
   }
 }</code></pre>
   </div>
+
+  <h2>Test It</h2>
+  <div class="test-section">
+    <div class="form-group">
+      <label for="model-input">Model:</label>
+      <input type="text" id="model-input" value="anthropic/claude-sonnet-4-20250514" placeholder="Enter model name">
+    </div>
+    <div class="form-group">
+      <label for="api-key-input">API Key:</label>
+      <input type="password" id="api-key-input" placeholder="Enter your API key">
+    </div>
+    <button id="test-button" onclick="testAPI()">Test API</button>
+    <div id="test-response" class="test-response"></div>
+  </div>
+
   <h2>Model Codes</h2>
   <p>Supports any model LiteLLM supports, such as OpenAI, Anthropic, Google and more. Grab model identifiers from <a
       href="https://docs.litellm.ai/docs/providers" target="_blank">https://docs.litellm.ai/docs/providers</a></p>
@@ -283,6 +385,80 @@ print(response.json())</code></pre>
 
     // Add active class to clicked tab
     event.target.classList.add('active');
+  }
+
+  async function testAPI() {
+    const modelInput = document.getElementById('model-input');
+    const apiKeyInput = document.getElementById('api-key-input');
+    const testButton = document.getElementById('test-button');
+    const responseDiv = document.getElementById('test-response');
+
+    const model = modelInput.value.trim();
+    const apiKey = apiKeyInput.value.trim();
+
+    if (!model || !apiKey) {
+      showResponse('Please fill in both model and API key fields.', 'error');
+      return;
+    }
+
+    testButton.disabled = true;
+    testButton.textContent = 'Testing...';
+    responseDiv.style.display = 'none';
+
+    try {
+      const response = await fetch('http://localhost:8000/json', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': apiKey
+        },
+        body: JSON.stringify({
+          model: model,
+          system_prompt: 'Only output required fields.',
+          prompt: 'Please analyze the following user review: "This coffee maker is absolutely amazing! It brews perfect coffee every morning and the design looks great in my kitchen. The only minor issue is that it takes a bit longer to brew than expected, but the quality makes up for it. Highly recommend!"',
+          json_schema: {
+            type: 'object',
+            properties: {
+              title: {
+                type: 'string',
+                description: 'A brief title summarizing the review'
+              },
+              sentiment: {
+                type: 'number',
+                description: 'Sentiment score from -1 (negative) to 1 (positive)'
+              },
+              category: {
+                type: 'string',
+                enum: ['electronics', 'home', 'food', 'clothing', 'books', 'other'],
+                description: 'Product category'
+              }
+            },
+            required: ['title', 'sentiment', 'category'],
+            additionalProperties: false
+          }
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        showResponse(JSON.stringify(data, null, 2), 'success');
+      } else {
+        const errorText = await response.text();
+        showResponse(`Error ${response.status}: ${errorText}`, 'error');
+      }
+    } catch (error) {
+      showResponse(`Network error: ${error.message}`, 'error');
+    } finally {
+      testButton.disabled = false;
+      testButton.textContent = 'Test API';
+    }
+  }
+
+  function showResponse(message, type) {
+    const responseDiv = document.getElementById('test-response');
+    responseDiv.className = `test-response ${type}`;
+    responseDiv.innerHTML = `<pre>${message}</pre>`;
+    responseDiv.style.display = 'block';
   }
 </script>
 </body>
