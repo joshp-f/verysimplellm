@@ -1,17 +1,15 @@
 {
-    "functions": {
-        "api/main.py": {
-            "runtime": "python3.12"
+    "devCommand": "uvicorn main:app --host 0.0.0.0 --port 3000",
+    "builds": [
+        {
+            "src": "api/main.py",
+            "use": "@vercel/python"
         }
-    },
+    ],
     "routes": [
         {
-            "src": "/json",
-            "dest": "/api/main.py"
-        },
-        {
             "src": "/(.*)",
-            "dest": "/$1"
+            "dest": "api/main.py"
         }
     ]
 }
