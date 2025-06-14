@@ -1,16 +1,10 @@
 from fastapi import FastAPI, HTTPException, Header
-from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any
 import litellm
 import json
-app = FastAPI(title="Simple LLM JSON API", version="1.0.0")
 
-@app.get("/", response_class=HTMLResponse)
-async def get_homepage():
-    with open("index.html", "r") as f:
-        return f.read()
+app = FastAPI(title="Simple LLM JSON API", version="1.0.0")
 
 class JSONRequest(BaseModel):
     model: str = Field(..., description="The model to use for the LLM call")
@@ -66,6 +60,12 @@ async def generate_json(
             status_code=500,
             detail=f"LLM call failed: {str(e)}"
         )
+
+# Vercel handler
+def handler(request):
+    from mangum import Mangum
+    asgi_handler = Mangum(app)
+    return asgi_handler(request, None)
 
 if __name__ == "__main__":
     import uvicorn
