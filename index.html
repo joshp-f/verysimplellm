@@ -232,7 +232,7 @@
   </div>
 
   <div id="curl" class="tab-content">
-    <pre><code>curl -X POST "http://localhost:8000/json" \
+    <pre><code>curl -X POST "https://verysimplellm.aitida.com/json" \
 -H "Content-Type: application/json" \
 -H "Authorization: your-model-provider-key" \
 -d '{
@@ -262,7 +262,7 @@
   </div>
 
   <div id="javascript" class="tab-content active">
-    <pre><code>const response = await fetch('http://localhost:8000/json', {
+    <pre><code>const response = await fetch('https://verysimplellm.aitida.com/json', {
 method: 'POST',
 headers: {
   'Content-Type': 'application/json',
@@ -302,7 +302,7 @@ console.log(data);</code></pre>
   <div id="python" class="tab-content">
     <pre><code>import requests
 
-response = requests.post('http://localhost:8000/json',
+response = requests.post('https://verysimplellm.aitida.com/json',
 headers={
   'Content-Type': 'application/json',
   'Authorization': 'your-model-providers-key'
@@ -367,6 +367,10 @@ print(response.json())</code></pre>
 
   <h2>Authorization header</h2>
   <p>Put your LLM providers Api Key into the Authorization header. We dont store this anywhere ever.</p>
+
+  <h2>Source Code</h2>
+  <p>View the source code at <a href="https://github.com/joshp-f/verysimplellm"
+      target="_blank">https://github.com/joshp-f/verysimplellm</a></p>
 </body>
 
 </html>
@@ -406,7 +410,7 @@ print(response.json())</code></pre>
     responseDiv.style.display = 'none';
 
     try {
-      const response = await fetch('http://localhost:8000/json', {
+      const response = await fetch('https://verysimplellm.aitida.com/json', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
