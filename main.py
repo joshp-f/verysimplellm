@@ -5,7 +5,6 @@ from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any
 import litellm
 import json
-
 app = FastAPI(title="Simple LLM JSON API", version="1.0.0")
 
 @app.get("/", response_class=HTMLResponse)
@@ -46,8 +45,9 @@ async def generate_json(
             messages=messages,
             api_key=authorization,
             response_format={
-                "type": "json_object",
-                "schema": request.json_schema
+                "type": "json_schema",
+                "json_schema":{"schema":request.json_schema},
+                "strict":True
             }
         )
         
