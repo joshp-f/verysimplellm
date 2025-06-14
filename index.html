@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Very Simple LLM</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: #fff;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 300;
+      margin-bottom: 1rem;
+      color: #2c3e50;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 400;
+      margin: 2rem 0 1rem 0;
+      color: #34495e;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      color: #7f8c8d;
+      margin-bottom: 2rem;
+    }
+
+    .code-section {
+      margin: 2rem 0;
+    }
+
+    .code-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #2c3e50;
+    }
+
+    pre {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    code {
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+      background: #f8f9fa;
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-size: 0.9rem;
+    }
+
+    .response-section {
+      background: #f8f9fa;
+      border-left: 4px solid #3498db;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .endpoint {
+      background: #e8f5e8;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      margin: 1rem 0;
+      font-family: monospace;
+      font-weight: 600;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid #e9ecef;
+      margin: 2rem 0 0 0;
+    }
+
+    .tab {
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-size: 1rem;
+      color: #7f8c8d;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .tab:hover {
+      color: #2c3e50;
+    }
+
+    .tab.active {
+      color: #3498db;
+      border-bottom-color: #3498db;
+    }
+
+    .tab-content {
+      display: none;
+      margin-top: 1rem;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Very Simple LLM</h1>
+  <p class="subtitle">A minimal API to make LLMs do what you actually want</p>
+
+  <p>Very Simple LLM makes using mainstream llms as easy as possible. Heres how you can get json output:
+  </p>
+
+  <div class="endpoint">
+    POST /json
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('javascript')">JavaScript</button>
+    <button class="tab" onclick="showTab('python')">Python</button>
+    <button class="tab" onclick="showTab('curl')">cURL</button>
+  </div>
+
+  <div id="curl" class="tab-content">
+    <pre><code>curl -X POST "http://localhost:8000/json" \
+-H "Content-Type: application/json" \
+-H "Authorization: your-model-provider-key" \
+-d '{
+  "model": "gpt-4o-mini",
+  "prompt": "Please analyze the following user review: \"This coffee maker is absolutely amazing! It brews perfect coffee every morning and the design looks great in my kitchen. The only minor issue is that it takes a bit longer to brew than expected, but the quality makes up for it. Highly recommend!\"",
+  "json_schema": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "description": "A brief title summarizing the review"
+      },
+      "sentiment": {
+        "type": "number",
+        "description": "Sentiment score from -1 (negative) to 1 (positive)"
+      },
+      "category": {
+        "type": "string",
+        "enum": ["electronics", "home", "food", "clothing", "books", "other"],
+        "description": "Product category"
+      }
+    },
+    "required": ["title", "sentiment", "category"]
+  }
+}'</code></pre>
+  </div>
+
+  <div id="javascript" class="tab-content active">
+    <pre><code>const response = await fetch('http://localhost:8000/json', {
+method: 'POST',
+headers: {
+  'Content-Type': 'application/json',
+  'Authorization': 'your-api-key'
+},
+body: JSON.stringify({
+  model: 'gpt-4o-mini',
+  prompt: 'Please analyze the following user review: "This coffee maker is absolutely amazing! It brews perfect coffee every morning and the design looks great in my kitchen. The only minor issue is that it takes a bit longer to brew than expected, but the quality makes up for it. Highly recommend!"',
+  json_schema: {
+    type: 'object',
+    properties: {
+      title: {
+        type: 'string',
+        description: 'A brief title summarizing the review'
+      },
+      sentiment: {
+        type: 'number',
+        description: 'Sentiment score from -1 (negative) to 1 (positive)'
+      },
+      category: {
+        type: 'string',
+        enum: ['electronics', 'home', 'food', 'clothing', 'books', 'other'],
+        description: 'Product category'
+      }
+    },
+    required: ['title', 'sentiment', 'category']
+  }
+})
+});
+
+const data = await response.json();
+console.log(data);</code></pre>
+  </div>
+
+  <div id="python" class="tab-content">
+    <pre><code>import requests
+
+response = requests.post('http://localhost:8000/json',
+headers={
+  'Content-Type': 'application/json',
+  'Authorization': 'your-api-key'
+},
+json={
+  'model': 'gpt-4o-mini',
+  'prompt': 'Please analyze the following user review: "This coffee maker is absolutely amazing! It brews perfect coffee every morning and the design looks great in my kitchen. The only minor issue is that it takes a bit longer to brew than expected, but the quality makes up for it. Highly recommend!"',
+  'json_schema': {
+    'type': 'object',
+    'properties': {
+      'title': {
+        'type': 'string',
+        'description': 'A brief title summarizing the review'
+      },
+      'sentiment': {
+        'type': 'number',
+        'description': 'Sentiment score from -1 (negative) to 1 (positive)'
+      },
+      'category': {
+        'type': 'string',
+        'enum': ['electronics', 'home', 'food', 'clothing', 'books', 'other'],
+        'description': 'Product category'
+      }
+    },
+    'required': ['title', 'sentiment', 'category']
+  }
+}
+)
+
+print(response.json())</code></pre>
+  </div>
+
+  <h2>Example Response</h2>
+  <div class="response-section">
+    <pre><code>{
+  "json": {
+    "title": "Excellent Coffee Maker with Minor Brewing Speed Issue",
+    "sentiment": 0.8,
+    "category": "home"
+  }
+}</code></pre>
+  </div>
+
+  <h2>JSON Schema</h2>
+  <p>The API accepts any valid JSON schema. Here's the schema used in the example above:</p>
+
+  <pre><code>{
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "A brief title summarizing the review"
+    },
+    "sentiment": {
+      "type": "number",
+      "description": "Sentiment score from -1 (negative) to 1 (positive)"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["electronics", "home", "food", "clothing", "books", "other"],
+      "description": "Product category"
+    }
+  },
+  "required": ["title", "sentiment", "category"]
+}</code></pre>
+</body>
+
+</html>
+<script>
+  function showTab(tabName) {
+    // Hide all tab contents
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(content => content.classList.remove('active'));
+
+    // Remove active class from all tabs
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => tab.classList.remove('active'));
+
+    // Show selected tab content
+    document.getElementById(tabName).classList.add('active');
+
+    // Add active class to clicked tab
+    event.target.classList.add('active');
+  }
+</script>
+</body>
+
+</html>
